@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spatial Horizons — AR & VR in Next-Gen Tourism</title>
+  <meta name="description" content="An interactive, cinematic spatial computing experience exploring the transformative impact of Augmented and Virtual Reality in global tourism.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-obsidian mode-presentation" id="app-body">
+
+  <!-- Interactive 3D Canvas Background -->
+  <canvas id="spatial-canvas"></canvas>
+  <div class="ambient-mesh-glow"></div>
+  <div class="cyber-vignette"></div>
+
+  <!-- Audio Visualizer Indicator Pill -->
+  <div class="audio-pill-floating" id="audio-pill-floating" title="Ambient Spatial Synth Audio Status">
+    <div class="sound-bars">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </div>
+    <span class="audio-pill-label" id="audio-status-label">SPATIAL AUDIO: OFF</span>
+  </div>
+
+  <!-- Top Global Navigation & Spatial Telemetry HUD -->
+  <header class="spatial-hud-header" id="hud-header">
+    <div class="hud-left">
+      <div class="hud-brand">
+        <div class="brand-glyph">
+          <svg viewBox="0 0 32 32" class="glyph-svg">
+            <polygon points="16,2 30,10 30,22 16,30 2,22 2,10" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="16" cy="16" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+            <line x1="16" y1="2" x2="16" y2="11" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="16" y1="21" x2="16" y2="30" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="2" y1="10" x2="11" y2="16" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="21" y1="16" x2="30" y2="22" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="brand-copy">
+          <span class="brand-title">SPATIAL HORIZONS</span>
+          <span class="brand-meta">XR TOURISM RESEARCH • 2026</span>
+        </div>
+      </div>
+
+      <!-- Quick Section Jump Selector (Accessible directly) -->
+      <nav class="hud-nav" aria-label="Section Quick Jump">
+        <ul class="nav-links" id="nav-links">
+          <li><button class="nav-btn active" data-target="1"><span class="n-num">01</span> Title</button></li>
+          <li><button class="nav-btn" data-target="2"><span class="n-num">02</span> Intro</button></li>
+          <li><button class="nav-btn" data-target="3"><span class="n-num">03</span> Evolution</button></li>
+          <li><button class="nav-btn" data-target="4"><span class="n-num">04</span> Tech Stack</button></li>
+          <li><button class="nav-btn" data-target="5"><span class="n-num">05</span> Importance</button></li>
+          <li><button class="nav-btn" data-target="6"><span class="n-num">06</span> Applications</button></li>
+          <li><button class="nav-btn" data-target="7"><span class="n-num">07</span> AR vs VR</button></li>
+          <li><button class="nav-btn" data-target="8"><span class="n-num">08</span> Impact</button></li>
+          <li><button class="nav-btn" data-target="9"><span class="n-num">09</span> Future</button></li>
+          <li><button class="nav-btn" data-target="10"><span class="n-num">10</span> Conclusion</button></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- HUD Right Telemetry & Control Suite -->
+    <div class="hud-right">
+      <!-- Mode Switcher: Presentation Deck vs Cinematic Continuous Scroll -->
+      <div class="view-mode-toggle" title="Switch between 16:9 Presentation Slide Mode and Cinematic Scroll Page">
+        <button class="mode-btn active" id="btn-mode-presentation" data-mode="presentation">
+          <svg viewBox="0 0 24 24" class="mode-svg"><rect x="3" y="3" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2"/><line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/></svg>
+          <span>Deck</span>
+        </button>
+        <button class="mode-btn" id="btn-mode-scroll" data-mode="scroll">
+          <svg viewBox="0 0 24 24" class="mode-svg"><rect x="5" y="2" width="14" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="6" x2="12" y2="10" stroke="currentColor" stroke-width="2"/></svg>
+          <span>Scroll</span>
+        </button>
+      </div>
+
+      <!-- Slide Counter Telemetry -->
+      <div class="telemetry-pill slide-counter-pill" id="slide-counter-pill">
+        <span class="pill-dot"></span>
+        <span class="pill-label">STAGE</span>
+        <span class="pill-value"><span id="hud-curr-slide">01</span><span class="pill-sep">/</span>10</span>
+      </div>
+
+      <!-- Interactive Controls -->
+      <div class="hud-tools">
+        <button class="tool-btn" id="btn-sound-toggle" title="Toggle Ambient Spatial Audio & SFX (Key: S)">
+          <svg class="tool-icon sound-on-icon hidden" viewBox="0 0 24 24"><path fill="currentColor" d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77zm-2.5 9.77l-4.5-4H3v6h4l4.5 4v-6zm5.5-1c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+          <svg class="tool-icon sound-off-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+        </button>
+        <button class="tool-btn" id="btn-autoplay" title="Auto-Cycle Stages (Key: P)">
+          <svg class="tool-icon play-icon" viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="currentColor"/></svg>
+          <svg class="tool-icon pause-icon hidden" viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16" fill="currentColor"/><rect x="15" y="4" width="4" height="16" fill="currentColor"/></svg>
+        </button>
+        <button class="tool-btn" id="btn-overview-grid" title="Slide Matrix Grid (Key: O)">
+          <svg class="tool-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+        <button class="tool-btn" id="btn-fullscreen" title="Fullscreen Mode (Key: F)">
+          <svg class="tool-icon fs-expand" viewBox="0 0 24 24"><path fill="currentColor" d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          <svg class="tool-icon fs-shrink hidden" viewBox="0 0 24 24"><path fill="currentColor" d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Progress Bar Top Line -->
+  <div class="progress-bar-track">
+    <div class="progress-bar-glow" id="global-progress-bar"></div>
+    <div class="autoplay-timer-line" id="autoplay-timer-line"></div>
+  </div>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main class="experience-viewport" id="viewport-container">
+
+    <!-- ================================================================= -->
+    <!-- 1. TITLE — Powerful Cinematic Tourism/VR Hero + Floating AR UI    -->
+    <!-- ================================================================= -->
+    <section class="section-stage slide-active" id="section-1" data-slide-index="1" data-section-name="TITLE">
+      <div class="stage-backdrop hero-stage-backdrop">
+        <img src="assets/cinematic/hero_cinematic.jpg" alt="Traveler with AR interface looking over ancient wonder and futuristic city" class="hero-bg-img" id="hero-img">
+        <div class="hero-cinematic-mask"></div>
+      </div>
+
+      <!-- Floating AR Holographic Reticles & Telemetry Overlay -->
+      <div class="ar-interface-container" id="ar-hud-surface">
+        
+        <!-- Interactive Target Reticle -->
+        <div class="ar-reticle-tracker" id="ar-pointer-reticle">
+          <div class="reticle-ring outer-ring"></div>
+          <div class="reticle-ring inner-ring"></div>
+          <div class="reticle-crosshair"></div>
+          <div class="reticle-readout">
+            <span class="readout-coord" id="reticle-coords">37.9715° N, 23.7257° E</span>
+            <span class="readout-tag">VPS LOCK: 99.4%</span>
+          </div>
+        </div>
+
+        <!-- Floating AR Glass Card: Top Right Sensor Telemetry -->
+        <div class="ar-telemetry-panel top-right-card animate-on-load tilt-card" data-tilt-intensity="15">
+          <div class="glass-header">
+            <span class="live-pulse"></span>
+            <span class="glass-title">SPATIAL TELEMETRY FEED</span>
+            <span class="glass-id">CH-08 // M2P</span>
+          </div>
+          <div class="telemetry-grid">
+            <div class="t-item">
+              <span class="t-label">MOTION-TO-PHOTON</span>
+              <span class="t-value highlight-cyan">8.4 ms</span>
+            </div>
+            <div class="t-item">
+              <span class="t-label">REFRESH RATE</span>
+              <span class="t-value">120 Hz</span>
+            </div>
+            <div class="t-item">
+              <span class="t-label">SPATIAL POSE</span>
+              <span class="t-value highlight-green">6DoF STABLE</span>
+            </div>
+            <div class="t-item">
+              <span class="t-label">GAUSSIAN SPLATS</span>
+              <span class="t-value">2.4M ACTIVE</span>
+            </div>
+          </div>
+          <div class="glass-foot-bar">
+            <div class="foot-signal"><span></span><span></span><span></span><span></span></div>
+            <span class="foot-note">5G MEC EDGE SYNC: ZERO DRIFT</span>
+          </div>
+        </div>
+
+        <!-- Floating AR Waypoint Tag: Pointing to Landmark -->
+        <div class="ar-waypoint-anchor animate-on-load delay-1" style="top: 32%; right: 28%;">
+          <div class="anchor-ping"></div>
+          <div class="anchor-card">
+            <div class="anchor-badge">LANDMARK IDENTIFIED</div>
+            <div class="anchor-title">Great Pyramid of Giza</div>
+            <div class="anchor-meta">2560 BC • Virtual Chrono-Scan: Restored</div>
+          </div>
+        </div>
+
+        <!-- Hero Content Foreground -->
+        <div class="hero-content-wrapper">
+          <div class="hero-eyebrow animate-on-load">
+            <span class="eyebrow-chip">NEXT-GEN SPATIAL COMPUTING</span>
+            <span class="eyebrow-sep">/</span>
+            <span class="eyebrow-meta">IMMERSIVE TOURISM REVOLUTION</span>
+          </div>
+
+          <h1 class="hero-headline animate-on-load delay-1">
+            SPATIAL<br>
+            <span class="gradient-text">HORIZONS</span>
+          </h1>
+
+          <p class="hero-subtitle animate-on-load delay-2">
+            Where physical monuments meet infinite synthetic realities — redefining the human voyage through Augmented & Virtual Reality.
+          </p>
+
+          <!-- Interactive Action Suite -->
+          <div class="hero-actions animate-on-load delay-3">
+            <button class="hero-cta-btn primary-glow" id="hero-btn-begin">
+              <span class="btn-text">Begin Spatial Journey</span>
+              <svg viewBox="0 0 24 24" class="btn-icon"><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2"/><polyline points="12,5 19,12 12,19" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            </button>
+            <button class="hero-cta-btn secondary-glass" id="hero-btn-deck">
+              <svg viewBox="0 0 24 24" class="btn-icon"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+              <span class="btn-text">Explore Interactive Deck</span>
+            </button>
+          </div>
+
+          <!-- Bottom Micro-Stats Pill Row -->
+          <div class="hero-stat-pills animate-on-load delay-4">
+            <div class="stat-pill">
+              <span class="sp-num">0 kg</span>
+              <span class="sp-lbl">Carbon Emissions</span>
+            </div>
+            <div class="stat-pill">
+              <span class="sp-num">100%</span>
+              <span class="sp-lbl">Global Physical Accessibility</span>
+            </div>
+            <div class="stat-pill">
+              <span class="sp-num">&lt; 15ms</span>
+              <span class="sp-lbl">Latency Immersion Limit</span>
+            </div>
+            <div class="stat-pill">
+              <span class="sp-num">10M+</span>
+              <span class="sp-lbl">Preserved Digital Twins</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating AR Mode Toggle Switcher -->
+        <div class="hero-lens-toggle animate-on-load delay-2">
+          <span class="lens-label">LENS MODE</span>
+          <div class="lens-switch-group">
+            <button class="lens-opt active" id="lens-opt-ar">AR OVERLAY</button>
+            <button class="lens-opt" id="lens-opt-vr">VR TELEPORT</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 2. INTRODUCTION — Visually Explain AR vs VR (Two Futuristic Panels)-->
+    <!-- ================================================================= -->
+    <section class="section-stage" id="section-2" data-slide-index="2" data-section-name="INTRODUCTION">
+      <div class="stage-container">
+        
+        <div class="section-header-block">
+          <div class="header-pre">
+            <span class="badge-accent">02 // TAXONOMY & FUNDAMENTALS</span>
+            <span class="badge-sub">THE DUAL PARADIGM</span>
+          </div>
+          <h2 class="section-title">Augmented Reality <span class="dim-vs">vs</span> Virtual Reality</h2>
+          <p class="section-desc">
+            Two distinct spatial architectures fundamentally altering human interaction with cultural heritage, physical travel, and simulated geography.
+          </p>
+        </div>
+
+        <!-- Interactive Reality Transition Slider Bar -->
+        <div class="reality-spectrum-bar">
+          <div class="spectrum-label-left">
+            <span class="spec-dot green"></span>
+            <strong>PHYSICAL REALITY</strong> (Unmodified)
+          </div>
+          <div class="spectrum-slider-wrapper">
+            <input type="range" id="reality-blend-slider" min="0" max="100" value="50" class="spectrum-range">
+            <div class="slider-fill" id="spectrum-fill-track"></div>
+            <div class="slider-tags">
+              <span class="stag" style="left: 0%;">Real World</span>
+              <span class="stag" style="left: 50%;">Augmented Overlay (AR)</span>
+              <span class="stag" style="left: 100%;">Virtual Immersion (VR)</span>
+            </div>
+          </div>
+          <div class="spectrum-label-right">
+            <span class="spec-dot cyan"></span>
+            <strong>SYNTHETIC DOMAIN</strong> (100% Digital)
+          </div>
+        </div>
+
+        <!-- The Two Futuristic Comparison Panels -->
+        <div class="intro-dual-panels">
+          
+          <!-- PANEL A: AUGMENTED REALITY (AR) -->
+          <div class="futuristic-panel ar-panel tilt-card" id="intro-panel-ar" data-tilt-intensity="8">
+            <div class="panel-cyber-border"></div>
+            
+            <div class="panel-badge-row">
+              <span class="panel-tech-pill ar-pill">
+                <svg viewBox="0 0 24 24" class="pill-icon"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                AUGMENTED REALITY (AR)
+              </span>
+              <span class="panel-mode-tag">WORLD-ANCHORED</span>
+            </div>
+
+            <div class="panel-media-window">
+              <div class="window-inner ar-window-sim">
+                <div class="sim-bg-layer ar-forum-bg"></div>
+                <div class="sim-ar-wireframe" id="ar-wireframe-toggle"></div>
+                <div class="sim-floating-tag tag-colosseum">
+                  <span class="tag-pin"></span>
+                  <div class="tag-body">
+                    <strong>Roman Forum Recon</strong>
+                    <span>Chronological Overlay: 320 AD</span>
+                  </div>
+                </div>
+                <div class="sim-hud-corners">
+                  <span class="c-tl"></span><span class="c-tr"></span><span class="c-bl"></span><span class="c-br"></span>
+                </div>
+                <div class="sim-caption">OPTICAL WAVEGUIDE SEE-THROUGH SIMULATION</div>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <h3 class="panel-heading">Contextual Spatial Overlay</h3>
+              <p class="panel-summary">
+                Retains 100% of the physical environment while projecting millimeter-anchored digital twins, historical restorations, and intuitive navigational breadcrumbs into the traveler's natural optical field of view.
+              </p>
+
+              <div class="panel-spec-specs">
+                <div class="spec-row">
+                  <span class="spec-k">Optics Pipeline:</span>
+                  <span class="spec-v">Diffractive Waveguide / Optical See-Through</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-k">Situational Awareness:</span>
+                  <span class="spec-v highlight-green">Full 360° Real-World Peripheral</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-k">Primary Tourism Role:</span>
+                  <span class="spec-v highlight-cyan">On-Site Navigation, Live Translation & Restoration</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-k">Key Hardware:</span>
+                  <span class="spec-v">Smart Glasses, HUDs, Spatial Mobile VPS</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-foot">
+              <span class="foot-signal-tag">LATENCY SENSITIVITY: &lt; 10ms (Pose Drift)</span>
+            </div>
+          </div>
+
+          <!-- PANEL B: VIRTUAL REALITY (VR) -->
+          <div class="futuristic-panel vr-panel tilt-card" id="intro-panel-vr" data-tilt-intensity="8">
+            <div class="panel-cyber-border"></div>
+
+            <div class="panel-badge-row">
+              <span class="panel-tech-pill vr-pill">
+                <svg viewBox="0 0 24 24" class="pill-icon"><path fill="currentColor" d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v-2h3v2zm6 0h-3v-2h3v2z"/></svg>
+                VIRTUAL REALITY (VR)
+              </span>
+              <span class="panel-mode-tag">TOTAL IMMERSION</span>
+            </div>
+
+            <div class="panel-media-window">
+              <div class="window-inner vr-window-sim">
+                <div class="sim-bg-layer vr-coral-bg"></div>
+                <div class="sim-vr-particles" id="vr-particle-field"></div>
+                <div class="sim-floating-tag tag-deepsea">
+                  <span class="tag-pin"></span>
+                  <div class="tag-body">
+                    <strong>Great Barrier Coral Trench</strong>
+                    <span>Volumetric Telepresence • Depth: 45m</span>
+                  </div>
+                </div>
+                <div class="sim-hud-corners">
+                  <span class="c-tl"></span><span class="c-tr"></span><span class="c-bl"></span><span class="c-br"></span>
+                </div>
+                <div class="sim-caption">100% SYNTHETIC PHOTOREALISTIC DOME</div>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <h3 class="panel-heading">Infinite Synthetic Telepresence</h3>
+              <p class="panel-summary">
+                Replaces sensory physical surroundings entirely with a photorealistic, 6DoF digital synthetic universe — teleporting users to fragile ecological reefs, outer space, or vanished ancient empires from home.
+              </p>
+
+              <div class="panel-spec-specs">
+                <div class="spec-row">
+                  <span class="spec-k">Optics Pipeline:</span>
+                  <span class="spec-v">Dual 4K Micro-OLED / Pancake Optics (VST)</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-k">Situational Awareness:</span>
+                  <span class="spec-v highlight-amber">Complete Environmental Sensory Isolation</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-k">Primary Tourism Role:</span>
+                  <span class="spec-v highlight-cyan">Remote Exploration, Time Travel, Eco-Protection</span>
+                </div>
+                <div class="spec-row">
+                  <span class="spec-k">Key Hardware:</span>
+                  <span class="spec-v">HMDs (Vision Pro, Quest), Haptic Pods, 6DoF Avatars</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-foot">
+              <span class="foot-signal-tag">CYBERSICKNESS THRESHOLD: &lt; 15.6ms M2P</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 3. EVOLUTION — Horizontal Timeline from Early AR/VR to Modern XR   -->
+    <!-- ================================================================= -->
+    <section class="section-stage" id="section-3" data-slide-index="3" data-section-name="EVOLUTION">
+      <div class="stage-container">
+        
+        <div class="section-header-block">
+          <div class="header-pre">
+            <span class="badge-accent">03 // HISTORICAL TRAJECTORY</span>
+            <span class="badge-sub">CHRONOLOGY OF IMMERSION</span>
+          </div>
+          <h2 class="section-title">The Evolution of Spatial Tourism</h2>
+          <p class="section-desc">
+            From mechanical ceiling-mounted prototypes in 1968 to real-time neural 3D Gaussian Splatting and lightweight smart glasses.
+          </p>
+        </div>
+
+        <!-- Timeline Filter / Scrubber Header -->
+        <div class="timeline-controls-bar">
+          <div class="timeline-era-filters">
+            <button class="era-chip active" data-era="all">All Milestones</button>
+            <button class="era-chip" data-era="pioneer">Pioneer Roots (1968–1995)</button>
+            <button class="era-chip" data-era="consumer">Consumer Awakening (2012–2020)</button>
+            <button class="era-chip" data-era="spatial">Spatial Era (2023–2027+)</button>
+          </div>
+          <div class="timeline-nav-hints">
+            <span>← Drag or Scroll Horizontally →</span>
+          </div>
+        </div>
+
+        <!-- Horizontal Scrollable Timeline Track -->
+        <div class="timeline-horizontal-scroll" id="timeline-scroll-track">
+          
+          <!-- Milestone 1: 1968 -->
+          <div class="timeline-node" data-era="pioneer">
+            <div class="node-year-chip">1968</div>
+            <div class="node-connector-line"></div>
+            <div class="node-card tilt-card">
+              <div class="node-category">FOUNDATIONAL PROTOTYPE</div>
+              <h4 class="node-title">The Sword of Damocles</h4>
+              <p class="node-desc">
+                Ivan Sutherland and Bob Sproull invent the first head-mounted optical see-through display with wireframe graphics and mechanical ceiling tracking.
+              </p>
+              <div class="node-impact">
+                <span class="impact-tag">Concept Born</span>
+                <span class="impact-val">Wireframe 3D In Room</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Milestone 2: 1990 -->
+          <div class="timeline-node" data-era="pioneer">
+            <div class="node-year-chip">1990</div>
+            <div class="node-connector-line"></div>
+            <div class="node-card tilt-card">
+              <div class="node-category">TERMINOLOGY & SEEDING</div>
+              <h4 class="node-title">Coining Augmented Reality</h4>
+              <p class="node-desc">
+                Tom Caudell and David Mizell at Boeing coin "Augmented Reality" for optical wire overlays. Jaron Lanier pioneers commercial VR data gloves at VPL Research.
+              </p>
+              <div class="node-impact">
+                <span class="impact-tag">Industry Origin</span>
+                <span class="impact-val">Digital Overlay Defined</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Milestone 3: 1995 -->
+          <div class="timeline-node" data-era="pioneer">
+            <div class="node-year-chip">1995</div>
+            <div class="node-connector-line"></div>
+            <div class="node-card tilt-card">
+              <div class="node-category">EARLY MULTISENSORY CONSUMER</div>
+              <h4 class="node-title">Sensorama & Stereoscopic Trials</h4>
+              <p class="node-desc">
+                Morton Heilig’s multisensory Sensorama vision influences early commercial stereoscopy. Nintendo Virtual Boy brings tabletop monochrome stereoscopy to the public.
+              </p>
+              <div class="node-impact">
+                <span class="impact-tag">Early Attempt</span>
+                <span class="impact-val">Multi-Sensory Travel Dream</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Milestone 4: 2012–2016 -->
+          <div class="timeline-node" data-era="consumer">
+            <div class="node-year-chip">2012–16</div>
+            <div class="node-connector-line"></div>
+            <div class="node-card tilt-card">
+              <div class="node-category">THE CONSUMER RENAISSANCE</div>
+              <h4 class="node-title">Oculus Rift & Pokémon GO</h4>
+              <p class="node-desc">
+                Palmer Luckey's Oculus Kickstarter ignites modern 6DoF consumer VR. Niantic’s Pokémon GO introduces 100M+ consumers to geocaching and mobile AR outdoor exploration.
+              </p>
+              <div class="node-impact">
+                <span class="impact-tag">Mass Adoption</span>
+                <span class="impact-val">100M+ AR Explorers</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Milestone 5: 2017–2020 -->
+          <div class="timeline-node" data-era="consumer">
+            <div class="node-year-chip">2017–20</div>
+            <div class="node-connector-line"></div>
+            <div class="node-card tilt-card">
+              <div class="node-category">STANDALONE 6DoF & AR ENGINES</div>
+              <h4 class="node-title">ARKit, ARCore & Quest Standalone</h4>
+              <p class="node-desc">
+                Apple and Google release ARKit and ARCore, turning 2 billion smartphones into AR exploration devices. Meta Quest eliminates PC tether cables for standalone tourism.
+              </p>
+              <div class="node-impact">
+                <span class="impact-tag">Ubiquity</span>
+                <span class="impact-val">WebXR Standardized</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Milestone 6: 2023–2024 -->
+          <div class="timeline-node" data-era="spatial">
+            <div class="node-year-chip active-chip">2023–24</div>
+            <div class="node-connector-line active-line"></div>
+            <div class="node-card highlight-glow tilt-card">
+              <div class="node-category highlight-cyan">SPATIAL COMPUTING DAWN</div>
+              <h4 class="node-title">Apple Vision Pro & NeRF Radiance</h4>
+              <p class="node-desc">
+                Pancake optics, dual 4K Micro-OLED, sub-millimeter eye & hand tracking. Neural Radiance Fields (NeRF) allow photorealistic 3D cultural heritage capture from drone imagery.
+              </p>
+              <div class="node-impact">
+                <span class="impact-tag">Breakthrough</span>
+                <span class="impact-val">4K Per Eye • Neural Scans</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Milestone 7: 2025–2027+ -->
+          <div class="timeline-node" data-era="spatial">
+            <div class="node-year-chip future-chip">2025–27+</div>
+            <div class="node-connector-line future-line"></div>
+            <div class="node-card future-glow tilt-card">
+              <div class="node-category highlight-magenta">THE SPATIAL WEB & 3DGS</div>
+              <h4 class="node-title">Meta Orion & 3D Gaussian Splatting</h4>
+              <p class="node-desc">
+                Under 70-gram holographic smart glasses with 70° FOV waveguides. 3DGS renders photorealistic historical ruins at 120 FPS. GenAI multimodal spatial guides guide tourists in real-time.
+              </p>
+              <div class="node-impact">
+                <span class="impact-tag">Horizon</span>
+                <span class="impact-val">&lt; 10ms Split-Rendering</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 4. TECHNOLOGIES — Futuristic Technology Ecosystem / Diagram       -->
+    <!-- ================================================================= -->
+    <section class="section-stage" id="section-4" data-slide-index="4" data-section-name="TECHNOLOGIES">
+      <div class="stage-container">
+        
+        <div class="section-header-block">
+          <div class="header-pre">
+            <span class="badge-accent">04 // ARCHITECTURAL ECOSYSTEM</span>
+            <span class="badge-sub">THE SPATIAL TECHNOLOGY STACK</span>
+          </div>
+          <h2 class="section-title">The Neural Spatial Computing Engine</h2>
+          <p class="section-desc">
+            Seven synergistic hardware and algorithmic pillars enabling sub-millimeter localization, photorealistic capture, and edge-rendered tourism.
+          </p>
+        </div>
+
+        <div class="tech-ecosystem-layout">
+          
+          <!-- Left: Interactive Node Map / Diagram -->
+          <div class="tech-diagram-wrapper">
+            <div class="diagram-central-core">
+              <div class="core-pulse-ring"></div>
+              <div class="core-box">
+                <span class="core-label">SPATIAL XR</span>
+                <span class="core-sub">TOURISM ENGINE</span>
+              </div>
+            </div>
+
+            <!-- Surrounding 7 Tech Nodes -->
+            <div class="tech-nodes-grid" id="tech-nodes-interactive">
+              
+              <!-- 1. SLAM -->
+              <div class="tech-node-chip active" data-tech="slam">
+                <div class="tn-icon">
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                </div>
+                <div class="tn-meta">
+                  <strong>SLAM</strong>
+                  <span>Simultaneous Localization & Mapping</span>
+                </div>
+              </div>
+
+              <!-- 2. IMU + Cameras -->
+              <div class="tech-node-chip" data-tech="imu">
+                <div class="tn-icon">
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3L2 12h3v8h14v-8h3L12 3zm0 4.5l5.5 5H15v5H9v-5H6.5L12 7.5z"/></svg>
+                </div>
+                <div class="tn-meta">
+                  <strong>IMU + Optical Array</strong>
+                  <span>1000Hz 6DoF Inertial Fusion</span>
+                </div>
+              </div>
+
+              <!-- 3. LiDAR -->
+              <div class="tech-node-chip" data-tech="lidar">
+                <div class="tn-icon">
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z"/></svg>
+                </div>
+                <div class="tn-meta">
+                  <strong>LiDAR & ToF</strong>
+                  <span>Direct Nanosecond Photon Depth</span>
+                </div>
+              </div>
+
+              <!-- 4. Photogrammetry -->
+              <div class="tech-node-chip" data-tech="photogrammetry">
+                <div class="tn-icon">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="currentColor"/><path fill="currentColor" d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+                </div>
+                <div class="tn-meta">
+                  <strong>Photogrammetry</strong>
+                  <span>Sub-Millimeter Multi-View Meshing</span>
+                </div>
+              </div>
+
+              <!-- 5. NeRF -->
+              <div class="tech-node-chip" data-tech="nerf">
+                <div class="tn-icon">
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>
+                </div>
+                <div class="tn-meta">
+                  <strong>NeRF</strong>
+                  <span>Neural Continuous Scene Volumes</span>
+                </div>
+              </div>
+
+              <!-- 6. 3DGS -->
+              <div class="tech-node-chip" data-tech="3dgs">
+                <div class="tn-icon">
+                  <svg viewBox="0 0 24 24"><polygon points="12,2 22,8.5 22,15.5 12,22 2,15.5 2,8.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+                </div>
+                <div class="tn-meta">
+                  <strong>3DGS</strong>
+                  <span>3D Gaussian Splatting (120 FPS)</span>
+                </div>
+              </div>
+
+              <!-- 7. 5G + MEC -->
+              <div class="tech-node-chip" data-tech="5gmec">
+                <div class="tn-icon">
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+                </div>
+                <div class="tn-meta">
+                  <strong>5G + MEC</strong>
+                  <span>Split-Rendering Edge Pipeline</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Right: Dynamic Tech Inspector Card -->
+          <div class="tech-inspector-panel glass-card tilt-card" id="tech-inspector-card" data-tilt-intensity="6">
+            <div class="inspector-header">
+              <div class="insp-tag-group">
+                <span class="insp-status-dot"></span>
+                <span class="insp-tech-id" id="insp-tech-id">PILLAR 01 // POSE ESTIMATION</span>
+              </div>
+              <span class="insp-category" id="insp-category">ALGORITHMIC BACKBONE</span>
+            </div>
+
+            <h3 class="insp-title" id="insp-title">Simultaneous Localization & Mapping (SLAM)</h3>
+
+            <p class="insp-desc" id="insp-desc">
+              Visual-Inertial SLAM continuously constructs a 3D geometric map of unmapped environments while simultaneously tracking the traveler's precise 6DoF position without relying on GPS, enabling seamless indoor museum and underground tomb navigation.
+            </p>
+
+            <div class="insp-metrics-box" id="insp-metrics-box">
+              <div class="im-item">
+                <span class="im-k">Pose Update Frequency</span>
+                <span class="im-v highlight-cyan" id="insp-metric-1">1000 Hz (Inertial) / 60 Hz (Visual)</span>
+              </div>
+              <div class="im-item">
+                <span class="im-k">Positioning Accuracy</span>
+                <span class="im-v highlight-green" id="insp-metric-2">&lt; 1.2 cm Drift over 500m</span>
+              </div>
+              <div class="im-item">
+                <span class="im-k">Environmental Occlusion</span>
+                <span class="im-v" id="insp-metric-3">Dynamic Keypoint Rejection</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Interactive Architecture Visualizer Snippet -->
+            <div class="insp-pipeline-preview">
+              <div class="pipe-step">
+                <span class="ps-label">RAW CAM + IMU</span>
+                <span class="ps-arrow">→</span>
+              </div>
+              <div class="pipe-step">
+                <span class="ps-label">ORB-SLAM3 FRONTEND</span>
+                <span class="ps-arrow">→</span>
+              </div>
+              <div class="pipe-step">
+                <span class="ps-label">BUNDLE ADJUSTMENT</span>
+                <span class="ps-arrow">→</span>
+              </div>
+              <div class="pipe-step active">
+                <span class="ps-label">ANCHORED AR HOLOGRAM</span>
+              </div>
+            </div>
+
+            <!-- Latency Budget Visualization -->
+            <div class="latency-budget-block">
+              <div class="lb-header">
+                <span>MOTION-TO-PHOTON PIPELINE BUDGET:</span>
+                <strong class="highlight-cyan">15.6 ms TARGET (MET: 11.2 ms)</strong>
+              </div>
+              <div class="lb-bar">
+                <div class="lb-seg seg-sensor" style="width: 16%;" title="Sensor Sampling: 2.5ms">2.5ms</div>
+                <div class="lb-seg seg-compute" style="width: 28%;" title="Pose & Physics: 4.4ms">4.4ms</div>
+                <div class="lb-seg seg-render" style="width: 32%;" title="Gaussian Splat Raster: 5.0ms">5.0ms</div>
+                <div class="lb-seg seg-display" style="width: 24%;" title="Display Flip: 3.7ms">3.7ms</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 5. IMPORTANCE — 5–6 Visual Cards for Distance, Cost, A11y, etc.   -->
+    <!-- ================================================================= -->
+    <section class="section-stage" id="section-5" data-slide-index="5" data-section-name="IMPORTANCE">
+      <div class="stage-container">
+        
+        <div class="section-header-block">
+          <div class="header-pre">
+            <span class="badge-accent">05 // STRATEGIC VALUE</span>
+            <span class="badge-sub">WHY SPATIAL COMPUTING MATTERS</span>
+          </div>
+          <h2 class="section-title">Transcending Physical Boundaries</h2>
+          <p class="section-desc">
+            Six foundational paradigms where spatial technologies overcome geographical, economic, and physical barriers in global exploration.
+          </p>
+        </div>
+
+        <!-- 6 Visual Cards Grid -->
+        <div class="importance-cards-grid">
+          
+          <!-- Card 1: Zero-Distance -->
+          <div class="imp-card tilt-card" data-tilt-intensity="12">
+            <div class="card-glow-edge"></div>
+            <div class="card-icon-halo icon-blue">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="12" cy="12" rx="4" ry="10" fill="none" stroke="currentColor" stroke-width="2"/><line x1="2" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2"/></svg>
+            </div>
+            <div class="card-index-pill">01 // TELEPRESENCE</div>
+            <h3 class="card-heading">Zero-Distance Exploration</h3>
+            <p class="card-copy">
+              Eliminates physical transit constraints. Travelers explore remote wonders like Machu Picchu, Antarctica, or the Mariana Trench instantly from anywhere on Earth.
+            </p>
+            <div class="card-stat-badge">
+              <span class="cs-num">0 km</span>
+              <span class="cs-lbl">Travel Radius Needed</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Cost Democratization -->
+          <div class="imp-card tilt-card" data-tilt-intensity="12">
+            <div class="card-glow-edge"></div>
+            <div class="card-icon-halo icon-gold">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+            </div>
+            <div class="card-index-pill">02 // DEMOCRATIZATION</div>
+            <h3 class="card-heading">Radical Cost Reduction</h3>
+            <p class="card-copy">
+              Abolishes thousands of dollars in flights, luxury lodging, and entry visas. Students, underprivileged communities, and global learners gain access to high-tier world wonders.
+            </p>
+            <div class="card-stat-badge">
+              <span class="cs-num">95%</span>
+              <span class="cs-lbl">Cost Savings per Tour</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Universal Accessibility -->
+          <div class="imp-card tilt-card" data-tilt-intensity="12">
+            <div class="card-glow-edge"></div>
+            <div class="card-icon-halo icon-mint">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="4" r="2" fill="currentColor"/><path fill="currentColor" d="M19 13v-2c-1.54.02-3.09-.75-4.07-1.83l-1.29-1.43c-.17-.19-.38-.34-.61-.45-.01 0-.01-.01-.02-.01H13c-.35-.2-.75-.3-1.19-.26C10.76 7.11 10 8.04 10 9.09V15c0 1.1.9 2 2 2h5v5h2v-7h-4v-3h1.8c.8 0 1.5.53 1.72 1.3l.48 1.7z"/></svg>
+            </div>
+            <div class="card-index-pill">03 // INCLUSIVITY</div>
+            <h3 class="card-heading">Universal Physical A11y</h3>
+            <p class="card-copy">
+              Individuals with mobility impairments, wheelchair users, and elderly citizens can traverse steep Mayan temples, Venetian canals, and Alpine trails without physical impediments.
+            </p>
+            <div class="card-stat-badge">
+              <span class="cs-num">100%</span>
+              <span class="cs-lbl">Barrier-Free Access</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Heritage Preservation -->
+          <div class="imp-card tilt-card" data-tilt-intensity="12">
+            <div class="card-glow-edge"></div>
+            <div class="card-icon-halo icon-purple">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+            </div>
+            <div class="card-index-pill">04 // ARCHIVAL</div>
+            <h3 class="card-heading">Heritage Preservation</h3>
+            <p class="card-copy">
+              Sub-millimeter photogrammetric and NeRF digital twins capture monuments threatened by climate erosion, natural earthquakes, and regional conflict for future generations.
+            </p>
+            <div class="card-stat-badge">
+              <span class="cs-num">Immutable</span>
+              <span class="cs-lbl">Sub-mm 3D Digital Archive</span>
+            </div>
+          </div>
+
+          <!-- Card 5: Real-Time Navigation -->
+          <div class="imp-card tilt-card" data-tilt-intensity="12">
+            <div class="card-glow-edge"></div>
+            <div class="card-icon-halo icon-cyan">
+              <svg viewBox="0 0 24 24"><polygon points="12,2 19,21 12,17 5,21" fill="currentColor"/></svg>
+            </div>
+            <div class="card-index-pill">05 // WAYFINDING</div>
+            <h3 class="card-heading">Contextual Navigation</h3>
+            <p class="card-copy">
+              Eliminates anxiety and disorientation in complex international transit hubs, mega-airports, and labyrinthine historic old towns using world-anchored 3D optical pathlines.
+            </p>
+            <div class="card-stat-badge">
+              <span class="cs-num">Zero</span>
+              <span class="cs-lbl">Wayfinding Friction</span>
+            </div>
+          </div>
+
+          <!-- Card 6: Conservation & Over-Tourism -->
+          <div class="imp-card tilt-card" data-tilt-intensity="12">
+            <div class="card-glow-edge"></div>
+            <div class="card-icon-halo icon-emerald">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66C7.62 17.28 9.5 12 17 10V8zm0-6C7 4 4.9 10.17 2.82 15.34l1.89.66C6.62 11.28 8.5 6 17 4V2z"/></svg>
+            </div>
+            <div class="card-index-pill">06 // ECOLOGICAL</div>
+            <h3 class="card-heading">Eco-Conservation</h3>
+            <p class="card-copy">
+              Shields endangered ecological sites (Galapagos, fragile coral barriers, delicate limestone caverns) from human erosion while sustaining regional economies via virtual ticketing.
+            </p>
+            <div class="card-stat-badge">
+              <span class="cs-num">-84%</span>
+              <span class="cs-lbl">Footfall Degradation</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 6. APPLICATIONS — Immersive Destination Imagery + Clean Cards     -->
+    <!-- ================================================================= -->
+    <section class="section-stage" id="section-6" data-slide-index="6" data-section-name="APPLICATIONS">
+      <div class="stage-container">
+        
+        <div class="section-header-block">
+          <div class="header-pre">
+            <span class="badge-accent">06 // FIELD DEPLOYMENTS</span>
+            <span class="badge-sub">CROSS-SECTOR INTEGRATION</span>
+          </div>
+          <h2 class="section-title">Real-World Spatial Applications</h2>
+          <p class="section-desc">
+            Seven practical operational domains where Augmented and Virtual Reality are transforming destination management and traveler experiences today.
+          </p>
+        </div>
+
+        <!-- Application Filter Bar -->
+        <div class="app-filter-tabs">
+          <button class="app-tab active" data-app-filter="all">All Sectors (7)</button>
+          <button class="app-tab" data-app-filter="mobility">Mobility & Navigation</button>
+          <button class="app-tab" data-app-filter="culture">Culture & Museums</button>
+          <button class="app-tab" data-app-filter="service">Hospitality & Transit</button>
+          <button class="app-tab" data-app-filter="eco">Eco & Conservation</button>
+        </div>
+
+        <!-- 7 Application Cards Showcase Grid -->
+        <div class="app-showcase-grid" id="app-cards-grid">
+          
+          <!-- App 1: Navigation -->
+          <div class="app-card tilt-card" data-app-cat="mobility">
+            <div class="app-media">
+              <img src="assets/cinematic/airport_navigation.jpg" alt="AR Navigation in airport" class="app-img">
+              <div class="app-overlay-tag">AR WAYFINDING</div>
+            </div>
+            <div class="app-info">
+              <div class="app-kicker">VPS • 6DoF • BREADCRUMBS</div>
+              <h3 class="app-name">Spatial Wayfinding & Transit Guidance</h3>
+              <p class="app-summary">
+                Anchored arrows on floors, live landmark identification, and interactive subway interchange routing across multi-level metropolises.
+              </p>
+              <div class="app-meta-row">
+                <span class="am-badge">Global Deployments: Tokyo, London, Seoul</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- App 2: Heritage Reconstructions -->
+          <div class="app-card tilt-card" data-app-cat="culture">
+            <div class="app-media">
+              <img src="assets/cinematic/ar_vs_vr_intro.jpg" alt="Historical Heritage Roman Forum Reconstruction" class="app-img">
+              <div class="app-overlay-tag">CHRONO-AR</div>
+            </div>
+            <div class="app-info">
+              <div class="app-kicker">PHOTOGRAMMETRY • TIME TRAVEL</div>
+              <h3 class="app-name">Historical Heritage Reconstructions</h3>
+              <p class="app-summary">
+                Overlaying digitally restored colonnades, statues, and historical figures directly over existing ruins in Athens, Rome, and Hampi.
+              </p>
+              <div class="app-meta-row">
+                <span class="am-badge">Case Studies: Colosseum, Gateway of India</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- App 3: Museums -->
+          <div class="app-card tilt-card" data-app-cat="culture">
+            <div class="app-media">
+              <img src="assets/cinematic/museum_holo.jpg" alt="Museum AR Holo Exhibits" class="app-img">
+              <div class="app-overlay-tag">HOLO-GALLERIES</div>
+            </div>
+            <div class="app-info">
+              <div class="app-kicker">VOLUMETRIC • GUEST INTERACTION</div>
+              <h3 class="app-name">Museums & Volumetric Exhibits</h3>
+              <p class="app-summary">
+                Uncaged, life-sized holographic specimens and artifacts (King Tut, T-Rex anatomy) with conversational AI annotations and millimeter inspectability.
+              </p>
+              <div class="app-meta-row">
+                <span class="am-badge">Pioneered at: The Louvre, Smithsonian, RAIT</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- App 4: Hospitality & Pre-Booking -->
+          <div class="app-card tilt-card" data-app-cat="service">
+            <div class="app-media">
+              <img src="assets/cinematic/hero_cinematic.jpg" alt="Hospitality Pre-Booking Suite Walkthrough" class="app-img">
+              <div class="app-overlay-tag">VIRTUAL STAYS</div>
+            </div>
+            <div class="app-info">
+              <div class="app-kicker">360° ENGINE • BOOKING FIDELITY</div>
+              <h3 class="app-name">Hospitality & Pre-Booking Previews</h3>
+              <p class="app-summary">
+                Photorealistic 1:1 walk-throughs of resort overwater villas, cruise ship suites, and event ballrooms to eradicate booking uncertainty and disputes.
+              </p>
+              <div class="app-meta-row">
+                <span class="am-badge">Adoption: Marriott, Emirates First Class 3D</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- App 5: Airports & Transport -->
+          <div class="app-card tilt-card" data-app-cat="service">
+            <div class="app-media">
+              <img src="assets/cinematic/airport_navigation.jpg" alt="Airport terminal smart directions" class="app-img">
+              <div class="app-overlay-tag">SMART TRANSIT</div>
+            </div>
+            <div class="app-info">
+              <div class="app-kicker">IOT HUBS • INDOOR POSITIONING</div>
+              <h3 class="app-name">Airports & High-Capacity Hubs</h3>
+              <p class="app-summary">
+                Dynamic flight gate redirection, real-time luggage carousel navigation, and duty-free personalized holographic offers anchored to terminal walls.
+              </p>
+              <div class="app-meta-row">
+                <span class="am-badge">Trials: Singapore Changi, Munich Airport</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- App 6: Real-Time Translation -->
+          <div class="app-card tilt-card" data-app-cat="mobility">
+            <div class="app-media">
+              <img src="assets/cinematic/future_ai_guide.jpg" alt="Real time spatial OCR translation" class="app-img">
+              <div class="app-overlay-tag">NEURAL OCR</div>
+            </div>
+            <div class="app-info">
+              <div class="app-kicker">MULTIMODAL LLM • IN-SITU DISPLAY</div>
+              <h3 class="app-name">Real-Time Spatial Translation</h3>
+              <p class="app-summary">
+                Instant holographic translation of foreign street signs, ancient museum hieroglyphics, and menu ingredients natively rendered in the traveler's font.
+              </p>
+              <div class="app-meta-row">
+                <span class="am-badge">Coverage: 120+ Languages • Sub-50ms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- App 7: Eco-Tourism -->
+          <div class="app-card tilt-card" data-app-cat="eco">
+            <div class="app-media">
+              <img src="assets/cinematic/future_destination.jpg" alt="Eco-tourism virtual expeditions" class="app-img">
+              <div class="app-overlay-tag">ECO-EXPEDITIONS</div>
+            </div>
+            <div class="app-info">
+              <div class="app-kicker">ZERO FOOTPRINT • HABITAT PRESERVATION</div>
+              <h3 class="app-name">Eco-Tourism & Remote Sanctuaries</h3>
+              <p class="app-summary">
+                High-definition synthetic diving expeditions in protected coral reefs, Amazon rainforest canopy treks, and polar ice dives without carbon emissions.
+              </p>
+              <div class="app-meta-row">
+                <span class="am-badge">Impact: Zero Physical Habitat Disturbance</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 7. AR vs VR — Visually Striking Side-by-Side Comparison           -->
+    <!-- ================================================================= -->
+    <section class="section-stage" id="section-7" data-slide-index="7" data-section-name="AR vs VR">
+      <div class="stage-container">
+        
+        <div class="section-header-block">
+          <div class="header-pre">
+            <span class="badge-accent">07 // COMPARATIVE MATRIX</span>
+            <span class="badge-sub">ARCHITECTURAL BENCHMARK</span>
+          </div>
+          <h2 class="section-title">AR vs VR: Direct Architectural Comparison</h2>
+          <p class="section-desc">
+            Contrasting the spatial computing spectrum across immersion, situational awareness, optics, and practical travel usage.
+          </p>
+        </div>
+
+        <!-- Visually Striking Clean Comparison Table Layout -->
+        <div class="comparison-showcase-matrix">
+          
+          <div class="matrix-column col-ar">
+            <div class="col-head ar-gradient-head">
+              <div class="col-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="currentColor"/><line x1="12" y1="2" x2="12" y2="6" stroke="currentColor" stroke-width="2"/><line x1="12" y1="18" x2="12" y2="22" stroke="currentColor" stroke-width="2"/><line x1="2" y1="12" x2="6" y2="12" stroke="currentColor" stroke-width="2"/><line x1="18" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="2"/></svg>
+              </div>
+              <div class="col-titles">
+                <h3>AUGMENTED REALITY (AR)</h3>
+                <span>Digital Augmentation Over Physical World</span>
+              </div>
+            </div>
+
+            <div class="benchmark-list">
+              <div class="bench-item">
+                <div class="bi-param">PRIMARY ENVIRONMENT</div>
+                <div class="bi-val highlight-cyan">Physical Real-World Anchored</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">OPTICS ENGINE</div>
+                <div class="bi-val">Diffractive Waveguides / Optical See-Through</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">SITUATIONAL AWARENESS</div>
+                <div class="bi-val highlight-green">100% Real-World Visibility & Safety</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">TYPICAL TOURISM PHASE</div>
+                <div class="bi-val">On-Site Exploration, Navigation & Live Translation</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">USER INTERACTION</div>
+                <div class="bi-val">Micro-Hand Gestures, Eye Gaze & Multimodal Voice</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">OUTDOOR BRIGHTNESS</div>
+                <div class="bi-val highlight-amber">3,000+ Nits (Battles Mediterranean Sunlight)</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">LATENCY CRITICALITY</div>
+                <div class="bi-val">&lt; 10ms (Prevents Optical Anchor Drift)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Center Dimension Labels (Clean Visual Divider) -->
+          <div class="matrix-divider-axis">
+            <span class="axis-pill">VS</span>
+            <div class="axis-line"></div>
+          </div>
+
+          <div class="matrix-column col-vr">
+            <div class="col-head vr-gradient-head">
+              <div class="col-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="12" r="2.5" fill="currentColor"/><circle cx="16" cy="12" r="2.5" fill="currentColor"/><path d="M10 16c.8-.7 1.5-1 2-1s1.2.3 2 1" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+              </div>
+              <div class="col-titles">
+                <h3>VIRTUAL REALITY (VR)</h3>
+                <span>100% Synthetic Immersion & Telepresence</span>
+              </div>
+            </div>
+
+            <div class="benchmark-list">
+              <div class="bench-item">
+                <div class="bi-param">PRIMARY ENVIRONMENT</div>
+                <div class="bi-val highlight-magenta">100% Synthetic Digital Universe</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">OPTICS ENGINE</div>
+                <div class="bi-val">Dual 4K Micro-OLED / Pancake Video Passthrough</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">SITUATIONAL AWARENESS</div>
+                <div class="bi-val highlight-amber">Complete Sensory Isolation (Guardian Grids)</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">TYPICAL TOURISM PHASE</div>
+                <div class="bi-val">Pre-Trip Inspiration, Telepresence & Time Travel</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">USER INTERACTION</div>
+                <div class="bi-val">6DoF Hand Controllers, Teleportation & Avatars</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">OUTDOOR BRIGHTNESS</div>
+                <div class="bi-val highlight-cyan">100–500 Nits HDR (Controlled Dark Enclosure)</div>
+              </div>
+              <div class="bench-item">
+                <div class="bi-param">LATENCY CRITICALITY</div>
+                <div class="bi-val">&lt; 15.6ms (Prevents Vestibular Cybersickness)</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 8. BENEFITS & CHALLENGES — Balanced Two-Sided Modern Layout       -->
+    <!-- ================================================================= -->
+    <section class="section-stage" id="section-8" data-slide-index="8" data-section-name="BENEFITS & CHALLENGES">
+      <div class="stage-container">
+        
+        <div class="section-header-block">
+          <div class="header-pre">
+            <span class="badge-accent">08 // SYSTEM EQUILIBRIUM</span>
+            <span class="badge-sub">TRADE-OFFS & ROADBLOCKS</span>
+          </div>
+          <h2 class="section-title">Transformative Benefits vs Engineering Challenges</h2>
+          <p class="section-desc">
+            A balanced evaluation of the radical industry advantages against the critical optical, bandwidth, and social hurdles.
+          </p>
+        </div>
+
+        <div class="balanced-two-col-layout">
+          
+          <!-- LEFT SIDE: BENEFITS -->
+          <div class="two-col-side benefits-side">
+            <div class="side-banner-heading">
+              <span class="side-indicator-dot dot-green"></span>
+              <h3>CATALYTIC ADVANTAGES</h3>
+              <span class="side-tag">TRANSFORMATIVE GAINS</span>
+            </div>
+
+            <div class="side-cards-stack">
+              <!-- Benefit 1 -->
+              <div class="bc-card benefit-card tilt-card">
+                <div class="bc-icon">
+                  <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></svg>
+                </div>
+                <div class="bc-content">
+                  <div class="bc-pill-status green-status">EXPERIENCE ELEVATION</div>
+                  <h4 class="bc-title">Adaptive Hyper-Personalized Narratives</h4>
+                  <p class="bc-body">
+                    AI tourist engines adjust story depth, language, and interactive pacing dynamically for history scholars, families with young children, or speed travelers.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Benefit 2 -->
+              <div class="bc-card benefit-card tilt-card">
+                <div class="bc-icon">
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9v-2h2v2zm0-4H9V7h2v5z"/></svg>
+                </div>
+                <div class="bc-content">
+                  <div class="bc-pill-status green-status">DECARBONIZATION</div>
+                  <h4 class="bc-title">Carbon-Neutral Global Exploration</h4>
+                  <p class="bc-body">
+                    Substitutes exploratory and conference travel with zero-emission telepresence, saving an average of 1.8 tons of CO2 per international trip replaced.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Benefit 3 -->
+              <div class="bc-card benefit-card tilt-card">
+                <div class="bc-icon">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="12" stroke="currentColor" stroke-width="2"/><line x1="12" y1="16" x2="12.01" y2="16" stroke="currentColor" stroke-width="2"/></svg>
+                </div>
+                <div class="bc-content">
+                  <div class="bc-pill-status green-status">COMMERCIAL GROWTH</div>
+                  <h4 class="bc-title">Decoupled Revenue Generation</h4>
+                  <p class="bc-body">
+                    Heritage sites monetize global audiences via virtual ticketing, digital holographic souvenirs, and VIP remote masterclasses regardless of physical capacity caps.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Benefit 4 -->
+              <div class="bc-card benefit-card tilt-card">
+                <div class="bc-icon">
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                </div>
+                <div class="bc-content">
+                  <div class="bc-pill-status green-status">FIDELITY</div>
+                  <h4 class="bc-title">Pre-Trip Booking Confidence (+300%)</h4>
+                  <p class="bc-body">
+                    1:1 spatial walk-throughs of remote hotel rooms and cruises virtually eliminate traveler booking disputes, cancellations, and misleading promotional imagery.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT SIDE: CHALLENGES -->
+          <div class="two-col-side challenges-side">
+            <div class="side-banner-heading">
+              <span class="side-indicator-dot dot-amber"></span>
+              <h3>ENGINEERING BOTTLENECKS</h3>
+              <span class="side-tag">HARDWARE & PRIVACY LIMITS</span>
+            </div>
+
+            <div class="side-cards-stack">
+              <!-- Challenge 1 -->
+              <div class="bc-card challenge-card tilt-card">
+                <div class="bc-icon">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2"/><line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2"/><line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2"/><line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/></svg>
+                </div>
+                <div class="bc-content">
+                  <div class="bc-pill-status amber-status">OPTICAL CHALLENGE</div>
+                  <h4 class="bc-title">Outdoor Sunlight & Photonic Bleed</h4>
+                  <p class="bc-body">
+                    Bright outdoor sunlight (10,000+ lux) washes out holographic waveguide overlays.
+                  </p>
+                  <div class="mitigation-box">
+                    <span class="m-k">ENGINEERING MITIGATION:</span>
+                    <span class="m-v">Electrochromic glass lenses with dynamic millisecond tinting.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Challenge 2 -->
+              <div class="bc-card challenge-card tilt-card">
+                <div class="bc-icon">
+                  <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                </div>
+                <div class="bc-content">
+                  <div class="bc-pill-status amber-status">BANDWIDTH THRESHOLD</div>
+                  <h4 class="bc-title">Multi-Gigabyte Scene Streaming</h4>
+                  <p class="bc-body">
+                    Photorealistic 3DGS monument models require massive streaming bandwidth without exceeding the 15.6ms cybersickness threshold.
+                  </p>
+                  <div class="mitigation-box">
+                    <span class="m-k">ENGINEERING MITIGATION:</span>
+                    <span class="m-v">5G MEC Split-Rendering with foveated gaze compression.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Challenge 3 -->
+              <div class="bc-card challenge-card tilt-card">
+                <div class="bc-icon">
+                  <svg viewBox="0 0 24 24"><rect x="2" y="7" width="16" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><line x1="22" y1="11" x2="22" y2="13" stroke="currentColor" stroke-width="2"/></svg>
+                </div>
+                <div class="bc-content">
+                  <div class="bc-pill-status amber-status">ERGONOMICS</div>
+                  <h4 class="bc-title">Thermal Dissipation & Battery Weight</h4>
+                  <p class="bc-body">
+                    Lightweight glasses (&lt;70g) cannot sustain heavy on-board GPU rendering beyond 90 minutes before overheating on a tourist's nose bridge.
+                  </p>
+                  <div class="mitigation-box">
+                    <span class="m-k">ENGINEERING MITIGATION:</span>
+                    <span class="m-v">Wireless pocket compute pucks and silicon co-processors.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Challenge 4 -->
+              <div class="bc-card challenge-card tilt-card">
+                <div class="bc-icon">
+                  <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div class="bc-content">
+                  <div class="bc-pill-status amber-status">SOCIAL & ETHICAL</div>
+                  <h4 class="bc-title">Public Surveillance & GDPR Privacy</h4>
+                  <p class="bc-body">
+                    Continuous outward-facing spatial video capture in crowded historical piazzas creates legal friction and unauthorized recording issues.
+                  </p>
+                  <div class="mitigation-box">
+                    <span class="m-k">ENGINEERING MITIGATION:</span>
+                    <span class="m-v">Hardware recording LEDs and ephemeral on-chip facial obfuscation.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 9. FUTURE SCOPE — Ultra-Futuristic Slide: AI, Glasses, Haptics, etc-->
+    <!-- ================================================================= -->
+    <section class="section-stage" id="section-9" data-slide-index="9" data-section-name="FUTURE SCOPE">
+      <div class="stage-backdrop future-stage-backdrop">
+        <img src="assets/cinematic/future_ai_guide.jpg" alt="AI Guide LUNA hologram and digital twin city" class="future-bg-img">
+        <div class="future-cinematic-mask"></div>
+      </div>
+
+      <div class="stage-container relative-content">
+        
+        <div class="section-header-block">
+          <div class="header-pre">
+            <span class="badge-accent glow-magenta">09 // HORIZON 2030+</span>
+            <span class="badge-sub">THE MOST ADVANCED SPATIAL PARADIGM</span>
+          </div>
+          <h2 class="section-title">The Future of Spatial Tourism</h2>
+          <p class="section-desc">
+            Where embodied multimodal AI companions, neural smart glasses, full-body haptics, and decentralized digital twin cities converge.
+          </p>
+        </div>
+
+        <!-- 8 Futuristic Modules Matrix -->
+        <div class="future-modules-grid">
+          
+          <!-- Module 1: AI Guides -->
+          <div class="f-mod-card tilt-card" id="f-card-aiguide">
+            <div class="f-corner-accent"></div>
+            <div class="f-icon icon-cyan">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="currentColor"/><path fill="currentColor" d="M12 14c-6.1 0-8 4-8 4v2h16v-2s-1.9-4-8-4z"/></svg>
+            </div>
+            <div class="f-status">LUNA ENGINE // LIVE</div>
+            <h3 class="f-title">Embodied Multimodal AI Guides</h3>
+            <p class="f-desc">
+              Holographic conversational companions speaking 120+ languages with emotional nuance, answering spontaneous archaeological questions in real-time.
+            </p>
+            <button class="f-action-link" id="btn-test-ai-sim">Test AI Interaction Sim →</button>
+          </div>
+
+          <!-- Module 2: Smart Glasses -->
+          <div class="f-mod-card tilt-card">
+            <div class="f-corner-accent"></div>
+            <div class="f-icon icon-magenta">
+              <svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><line x1="10" y1="12" x2="14" y2="12" stroke="currentColor" stroke-width="2"/></svg>
+            </div>
+            <div class="f-status">&lt; 50g FORM FACTOR</div>
+            <h3 class="f-title">Neural Smart Glasses</h3>
+            <p class="f-desc">
+              All-day featherweight optical waveguides projecting directly onto the retina with micro-gesture EMG wristband control replacing the smartphone.
+            </p>
+            <span class="f-spec">FOV: 70° • 18-Hour Battery Life</span>
+          </div>
+
+          <!-- Module 3: Haptics -->
+          <div class="f-mod-card tilt-card" id="f-card-haptics">
+            <div class="f-corner-accent"></div>
+            <div class="f-icon icon-amber">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M11 2h2v4h-2zm-6.36 3.64l1.41-1.41 2.83 2.83-1.41 1.41zm14.72 0l2.83-2.83 1.41 1.41-2.83 2.83zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg>
+            </div>
+            <div class="f-status">TACTILE SYNCHRONIZATION</div>
+            <h3 class="f-title">Full-Body Thermal & Force Haptics</h3>
+            <p class="f-desc">
+              Vests and exoskeletons simulating the cold misty spray of Niagara Falls, the heat of the Sahara Desert, and rough stone texture of Roman columns.
+            </p>
+            <button class="f-action-link" id="btn-test-haptic-sim">Trigger Haptic Waveform →</button>
+          </div>
+
+          <!-- Module 4: Spatial Audio -->
+          <div class="f-mod-card tilt-card">
+            <div class="f-corner-accent"></div>
+            <div class="f-icon icon-blue">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
+            <div class="f-status">RAY-TRACED ACOUSTICS</div>
+            <h3 class="f-title">Binaural Spatial Soundscapes</h3>
+            <p class="f-desc">
+              Real-time room acoustic simulation rendering echoes bouncing off stone cathedrals, whispering historic voices from precise 3D physical coordinates.
+            </p>
+            <span class="f-spec">Head-Related Transfer Functions (HRTF)</span>
+          </div>
+
+          <!-- Module 5: Spatial Web 3.0 -->
+          <div class="f-mod-card tilt-card">
+            <div class="f-corner-accent"></div>
+            <div class="f-icon icon-purple">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="f-status">DECENTRALIZED VPS</div>
+            <h3 class="f-title">Spatial Web 3.0 & Open VPS</h3>
+            <p class="f-desc">
+              Open geospatial protocols enabling persistent, shared holographic monuments across any hardware ecosystem without proprietary corporate lock-in.
+            </p>
+            <span class="f-spec">Universal Scene Description (OpenUSD)</span>
+          </div>
+
+          <!-- Module 6: Digital Souvenirs -->
+          <div class="f-mod-card tilt-card">
+            <div class="f-corner-accent"></div>
+            <div class="f-icon icon-gold">
+              <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            </div>
+            <div class="f-status">CRYPTOGRAPHIC TRAVEL PROOF</div>
+            <h3 class="f-title">Holographic Digital Souvenirs</h3>
+            <p class="f-desc">
+              3D interactive collectible artifacts, stamps, and volumetric time-capsules minted upon visiting physical sites, viewable inside home spatial displays.
+            </p>
+            <span class="f-spec">Soulbound Proof-of-Visit Artifacts</span>
+          </div>
+
+          <!-- Module 7: Tourism Metaverse -->
+          <div class="f-mod-card tilt-card">
+            <div class="f-corner-accent"></div>
+            <div class="f-icon icon-emerald">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="12" cy="12" rx="4" ry="10" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            </div>
+            <div class="f-status">SYNCHRONOUS MULTI-USER</div>
+            <h3 class="f-title">Global Tourism Metaverse</h3>
+            <p class="f-desc">
+              Interconnected persistent virtual worlds where families across continents meet inside photorealistic digital twins to travel, hike, and socialize together.
+            </p>
+            <span class="f-spec">Millions of Concurrent Telepresent Travelers</span>
+          </div>
+
+          <!-- Module 8: Digital Twin Cities -->
+          <div class="f-mod-card tilt-card">
+            <div class="f-corner-accent"></div>
+            <div class="f-icon icon-cyan">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" stroke-width="2"/><line x1="9" y1="21" x2="9" y2="9" stroke="currentColor" stroke-width="2"/></svg>
+            </div>
+            <div class="f-status">1:1 REAL-TIME CITY TWIN</div>
+            <h3 class="f-title">Live Digital Twin Cities</h3>
+            <p class="f-desc">
+              Dynamic millimeter city replicas synced with live IoT weather, foot-traffic sensors, and historical timeline scrubbers allowing 2,000-year urban reviews.
+            </p>
+            <span class="f-spec">Live Satellite & Sensor Telemetry Sync</span>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 10. CONCLUSION — Strong Cinematic Closing Slide + Final Message   -->
+    <!-- ================================================================= -->
+    <section class="section-stage" id="section-10" data-slide-index="10" data-section-name="CONCLUSION">
+      <div class="stage-backdrop conclusion-backdrop">
+        <img src="assets/cinematic/future_destination.jpg" alt="Futuristic Tourism Destination in 2050" class="conclusion-bg-img">
+        <div class="conclusion-cinematic-mask"></div>
+      </div>
+
+      <div class="stage-container relative-content">
+        
+        <div class="conclusion-center-deck">
+          
+          <div class="conc-pill-tag animate-on-load">
+            <span class="cp-dot"></span>
+            <span>10 // CONCLUDING SYNTHESIS</span>
+            <span class="cp-sep">•</span>
+            <span>DESTINATION HORIZON 2050</span>
+          </div>
+
+          <h2 class="conc-headline animate-on-load delay-1">
+            Reality is No Longer a Limit.<br>
+            <span class="gradient-text">It is a Canvas.</span>
+          </h2>
+
+          <!-- The Concise, Powerful Final Message -->
+          <blockquote class="conc-quote-card animate-on-load delay-2 tilt-card" data-tilt-intensity="6">
+            <div class="quote-mark">“</div>
+            <p class="quote-text">
+              Travel is no longer confined by physical geography. Spatial computing and neural graphics transform reality itself into an infinite canvas — preserving the irreplaceable wonders of our past, democratizing the exploration of our present, and unlocking boundless horizons for humanity’s future.
+            </p>
+            <div class="quote-author">
+              <strong>SPATIAL COMPUTING IN TOURISM RESEARCH DIVISION</strong>
+              <span>Academic & Engineering Roadmap Synthesis</span>
+            </div>
+          </blockquote>
+
+          <!-- 4 Final Strategic Takeaways -->
+          <div class="conc-takeaways-row animate-on-load delay-3">
+            <div class="ct-item">
+              <span class="ct-num">01</span>
+              <h4>Hybrid Convergence</h4>
+              <p>Physical travel and digital augmentation merge into one seamless cognitive reality.</p>
+            </div>
+            <div class="ct-item">
+              <span class="ct-num">02</span>
+              <h4>Radical Inclusivity</h4>
+              <p>Zero barrier exploration for every human regardless of mobility or financial status.</p>
+            </div>
+            <div class="ct-item">
+              <span class="ct-num">03</span>
+              <h4>Heritage Eternity</h4>
+              <p>Millimeter digital twins preserve disappearing human marvels against time and climate.</p>
+            </div>
+            <div class="ct-item">
+              <span class="ct-num">04</span>
+              <h4>Low-Carbon Future</h4>
+              <p>Sustainable exploratory tourism aligned with planetary environmental equilibrium.</p>
+            </div>
+          </div>
+
+          <!-- Bottom Action Suite -->
+          <div class="conc-actions-row animate-on-load delay-4">
+            <button class="conc-btn primary-pulse" id="btn-restart-presentation">
+              <svg viewBox="0 0 24 24" class="btn-icon"><path fill="currentColor" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+              <span>Replay Spatial Odyssey</span>
+            </button>
+            <button class="conc-btn secondary-glass" id="btn-open-tech-overview">
+              <svg viewBox="0 0 24 24" class="btn-icon"><rect x="3" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+              <span>View All 10 Slides Matrix</span>
+            </button>
+            <button class="conc-btn secondary-glass" id="btn-toggle-sound-conc">
+              <svg viewBox="0 0 24 24" class="btn-icon"><path fill="currentColor" d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+              <span id="conc-sound-text">Ambient Audio</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- FLOATING BOTTOM HUD CONTROLS BAR (For Deck Mode & Quick Nav)     -->
+  <!-- ================================================================= -->
+  <footer class="spatial-hud-footer" id="hud-footer">
+    <div class="footer-left">
+      <button class="hud-nav-arrow" id="hud-prev-slide" title="Previous Slide (← / PageUp)" aria-label="Previous Slide">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        <span>PREV</span>
+      </button>
+      
+      <!-- Interactive Dots Indicator (10 Dots) -->
+      <div class="slide-dots-rail" id="slide-dots-rail">
+        <button class="s-dot active" data-dot-index="1" title="1. Title"></button>
+        <button class="s-dot" data-dot-index="2" title="2. Introduction (AR vs VR)"></button>
+        <button class="s-dot" data-dot-index="3" title="3. Evolution Timeline"></button>
+        <button class="s-dot" data-dot-index="4" title="4. Technologies Ecosystem"></button>
+        <button class="s-dot" data-dot-index="5" title="5. Strategic Importance"></button>
+        <button class="s-dot" data-dot-index="6" title="6. Destination Applications"></button>
+        <button class="s-dot" data-dot-index="7" title="7. AR vs VR Matrix"></button>
+        <button class="s-dot" data-dot-index="8" title="8. Benefits & Challenges"></button>
+        <button class="s-dot" data-dot-index="9" title="9. Future Scope"></button>
+        <button class="s-dot" data-dot-index="10" title="10. Conclusion"></button>
+      </div>
+
+      <button class="hud-nav-arrow" id="hud-next-slide" title="Next Slide (→ / Space / PageDown)" aria-label="Next Slide">
+        <span>NEXT</span>
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      </button>
+    </div>
+
+    <!-- Center Active Section Pill -->
+    <div class="footer-center">
+      <div class="active-sec-pill">
+        <span class="asp-prefix">CURRENT:</span>
+        <span class="asp-title" id="footer-active-section-name">1. TITLE // SPATIAL HORIZONS</span>
+      </div>
+    </div>
+
+    <!-- Right Keyboard Helpers & Telemetry -->
+    <div class="footer-right">
+      <div class="hud-kb-chips">
+        <span class="kb-chip"><kbd>←</kbd><kbd>→</kbd> Navigate</span>
+        <span class="kb-chip"><kbd>Space</kbd> Next</span>
+        <span class="kb-chip"><kbd>O</kbd> Overview</span>
+        <span class="kb-chip"><kbd>S</kbd> Sound</span>
+        <span class="kb-chip"><kbd>F</kbd> Fullscreen</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================================================================= -->
+  <!-- MODAL: 10 SLIDES OVERVIEW MATRIX (Grid View)                     -->
+  <!-- ================================================================= -->
+  <div class="overview-modal-overlay" id="overview-modal">
+    <div class="overview-modal-content">
+      <div class="om-header">
+        <div class="om-titles">
+          <h3>SLIDE MATRIX NAVIGATION</h3>
+          <span>Direct Visual Jump to Any of the 10 Spatial Sections</span>
+        </div>
+        <button class="om-close-btn" id="btn-close-overview" title="Close (Esc)">✕</button>
+      </div>
+
+      <div class="om-grid">
+        <div class="om-card" data-jump-index="1">
+          <div class="om-thumb-wrapper">
+            <img src="assets/cinematic/hero_cinematic.jpg" alt="1. Title">
+            <span class="om-badge">01</span>
+          </div>
+          <div class="om-meta">
+            <h4>1. TITLE</h4>
+            <p>Hero & Floating AR Interface</p>
+          </div>
+        </div>
+
+        <div class="om-card" data-jump-index="2">
+          <div class="om-thumb-wrapper">
+            <img src="assets/cinematic/ar_vs_vr_intro.jpg" alt="2. Introduction">
+            <span class="om-badge">02</span>
+          </div>
+          <div class="om-meta">
+            <h4>2. INTRODUCTION</h4>
+            <p>AR vs VR Futuristic Panels</p>
+          </div>
+        </div>
+
+        <div class="om-card" data-jump-index="3">
+          <div class="om-thumb-wrapper">
+            <div class="om-thumb-diagram">TIMELINE 1968–2027+</div>
+            <span class="om-badge">03</span>
+          </div>
+          <div class="om-meta">
+            <h4>3. EVOLUTION</h4>
+            <p>Horizontal Milestone Timeline</p>
+          </div>
+        </div>
+
+        <div class="om-card" data-jump-index="4">
+          <div class="om-thumb-wrapper">
+            <div class="om-thumb-diagram">SLAM • NeRF • 3DGS • 5G</div>
+            <span class="om-badge">04</span>
+          </div>
+          <div class="om-meta">
+            <h4>4. TECHNOLOGIES</h4>
+            <p>Futuristic Tech Ecosystem</p>
+          </div>
+        </div>
+
+        <div class="om-card" data-jump-index="5">
+          <div class="om-thumb-wrapper">
+            <div class="om-thumb-diagram">A11Y • COST • HERITAGE</div>
+            <span class="om-badge">05</span>
+          </div>
+          <div class="om-meta">
+            <h4>5. IMPORTANCE</h4>
+            <p>6 Strategic Value Cards</p>
+          </div>
+        </div>
+
+        <div class="om-card" data-jump-index="6">
+          <div class="om-thumb-wrapper">
+            <img src="assets/cinematic/airport_navigation.jpg" alt="6. Applications">
+            <span class="om-badge">06</span>
+          </div>
+          <div class="om-meta">
+            <h4>6. APPLICATIONS</h4>
+            <p>7 Destination Sector Cards</p>
+          </div>
+        </div>
+
+        <div class="om-card" data-jump-index="7">
+          <div class="om-thumb-wrapper">
+            <img src="assets/cinematic/ar_vs_vr_intro.jpg" alt="7. AR vs VR Matrix">
+            <span class="om-badge">07</span>
+          </div>
+          <div class="om-meta">
+            <h4>7. AR vs VR</h4>
+            <p>Direct Side-by-Side Matrix</p>
+          </div>
+        </div>
+
+        <div class="om-card" data-jump-index="8">
+          <div class="om-thumb-wrapper">
+            <div class="om-thumb-diagram">BENEFITS & CHALLENGES</div>
+            <span class="om-badge">08</span>
+          </div>
+          <div class="om-meta">
+            <h4>8. IMPACT</h4>
+            <p>Balanced Two-Sided Analysis</p>
+          </div>
+        </div>
+
+        <div class="om-card" data-jump-index="9">
+          <div class="om-thumb-wrapper">
+            <img src="assets/cinematic/future_ai_guide.jpg" alt="9. Future Scope">
+            <span class="om-badge">09</span>
+          </div>
+          <div class="om-meta">
+            <h4>9. FUTURE SCOPE</h4>
+            <p>AI Guides, Glasses & Metaverse</p>
+          </div>
+        </div>
+
+        <div class="om-card" data-jump-index="10">
+          <div class="om-thumb-wrapper">
+            <img src="assets/cinematic/future_destination.jpg" alt="10. Conclusion">
+            <span class="om-badge">10</span>
+          </div>
+          <div class="om-meta">
+            <h4>10. CONCLUSION</h4>
+            <p>Utopian Horizon & Final Synthesis</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- INTERACTIVE MODAL: AI GUIDE "LUNA" QUERY SIMULATOR               -->
+  <!-- ================================================================= -->
+  <div class="ai-sim-modal-overlay" id="ai-sim-modal">
+    <div class="ai-sim-dialog">
+      <div class="ai-sim-header">
+        <div class="ai-avatar">
+          <div class="avatar-ring"></div>
+          <span class="avatar-core">AI</span>
+        </div>
+        <div class="ai-titles">
+          <h4>LUNA // Multimodal Autonomous Spatial Guide</h4>
+          <span class="ai-state-tag"><span class="pulse-dot"></span> NEURAL AGENT ACTIVE (120+ LANGUAGES)</span>
+        </div>
+        <button class="ai-close-btn" id="btn-close-ai-sim">✕</button>
+      </div>
+
+      <div class="ai-chat-body" id="ai-chat-feed">
+        <div class="chat-msg ai-msg">
+          <div class="msg-bubble">
+            Greetings, traveler! I am LUNA, your situated spatial intelligence. I continuously synthesize photogrammetric point clouds, historical archives, and real-time transit telemetry. What would you like to explore?
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-sample-queries">
+        <span class="sq-label">Ask LUNA:</span>
+        <button class="sq-btn" data-query="What was the Roman Colosseum like during Emperor Titus in 80 AD?">"Reconstruct Colosseum in 80 AD"</button>
+        <button class="sq-btn" data-query="How does 3D Gaussian Splatting prevent cybersickness in this virtual tour?">"Why 3DGS stops cybersickness"</button>
+        <button class="sq-btn" data-query="Where is the least crowded authentic trattoria within 500m of the Parthenon?">"Find uncrowded food nearby"</button>
+      </div>
+
+      <div class="ai-input-bar">
+        <input type="text" id="ai-user-input" placeholder="Ask LUNA any tourism or spatial computing question..." autocomplete="off">
+        <button id="ai-send-btn" class="ai-send">
+          <svg viewBox="0 0 24 24"><polygon points="3 20 22 12 3 4 3 10 17 12 3 14" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- INTERACTIVE MODAL: HAPTIC WAVEFORM GENERATOR SIMULATOR           -->
+  <!-- ================================================================= -->
+  <div class="haptic-sim-modal-overlay" id="haptic-sim-modal">
+    <div class="haptic-dialog">
+      <div class="haptic-header">
+        <div class="haptic-titles">
+          <h4>FULL-BODY HAPTIC & THERMAL ACTUATOR SIMULATOR</h4>
+          <span>Simulating physical touch, cold mist, and tactile resistance across realities</span>
+        </div>
+        <button class="haptic-close-btn" id="btn-close-haptic-sim">✕</button>
+      </div>
+
+      <div class="haptic-body">
+        <div class="haptic-presets">
+          <button class="h-preset-btn active" data-wave="niagara">🌊 Niagara Falls Cold Mist</button>
+          <button class="h-preset-btn" data-wave="marble">🏛️ Ancient Roman Marble Texture</button>
+          <button class="h-preset-btn" data-wave="desert">☀️ Giza Desert Thermal Wave</button>
+          <button class="h-preset-btn" data-wave="jetpack">🚀 Spatial Glider Lift Off</button>
+        </div>
+
+        <div class="waveform-canvas-wrapper">
+          <canvas id="haptic-waveform-canvas" width="600" height="150"></canvas>
+        </div>
+
+        <div class="haptic-telemetry-readout">
+          <div class="ht-col">
+            <span class="ht-label">ACTUATOR FREQUENCY</span>
+            <span class="ht-val highlight-cyan" id="ht-freq">240 Hz</span>
+          </div>
+          <div class="ht-col">
+            <span class="ht-label">THERMAL GRADIENT</span>
+            <span class="ht-val highlight-green" id="ht-temp">16.4°C (Active Cool)</span>
+          </div>
+          <div class="ht-col">
+            <span class="ht-label">FORCE RESISTANCE</span>
+            <span class="ht-val" id="ht-force">4.2 N (Moderate)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Application Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
